@@ -1,0 +1,97 @@
+from collections import deque
+import sys
+
+n = int(input())
+graph = []
+for _ in range(n):
+    arr = list(map(int, sys.stdin.readline().strip().split()))
+    graph.append(arr)
+
+dx = [0, 0, -1, 1]
+dy = [1, -1, 0, 0]
+graph_area = [[0] * n for _ in range(n)]
+
+
+def bfs(x, y):
+    if graph[x][y] == 0 or visited[x][y]:
+        return -1
+    global area_num, cnt
+    q = deque([[x, y]])
+    while q:
+        cnt += 1
+        curr_x, curr_y = q.popleft()
+        if visited[curr_x][curr_y]:
+            continue
+        visited[curr_x][curr_y] = True
+        if graph[curr_x][curr_y]:
+            graph_area[curr_x][curr_y] = area_num
+        for i in range(4):
+            next_x, next_y = curr_x + dx[i], curr_y + dy[i]
+            if 0 <= next_x < n and 0 <= next_y < n:
+                if not visited[next_x][next_y] and graph[curr_x][curr_y]:
+                    q.append([next_x, next_y])
+    return cnt
+
+
+# 같은 지역이면 같은 숫자로 기록하기
+area_num = 1
+visited = [[False] * n for _ in range(n)]
+for i in range(n):
+    for j in range(n):
+        cnt = 0
+        if bfs(i, j) > 0:
+            area_num += 1
+
+
+def make_bridge(x, y):
+    global area_type
+    if visited2[x][y] or graph_area[x][y] != area_type:
+        return -1
+    global bridge_arr,cnt,min_bridge
+    q = deque([[x, y]])
+    distance[x][y]=0
+    while q:
+        curr_x, curr_y = q.popleft()
+        if visited2[curr_x][curr_y]:
+            continue
+        visited2[curr_x][curr_y]=True
+        cnt+=1
+        for i in range(4):
+            next_x, next_y = curr_x + dx[i], curr_y + dy[i]
+            if 0 <= next_x < n and 0 <= next_y < n:
+                if not visited2[next_x][next_y]:
+                    if graph_area[next_x][next_y]!=area_type and graph_area[next_x][next_y]!=0:
+                        dist=distance[curr_x][curr_y]
+                        bridge_arr.append(distance[curr_x][curr_y]+1)
+                        if min_bridge>dist:
+                            min_bridge=dist
+                        continue
+                    elif graph_area[next_x][next_y]==0:
+                        distance[next_x][next_y] = min(distance[next_x][next_y], distance[curr_x][curr_y] + 1)
+                    elif graph_area[next_x][next_y] == area_type:
+                        distance[next_x][next_y] = 0
+
+                    else:
+                        continue
+                    q.append([next_x, next_y])
+
+
+    return cnt
+
+
+bridge_arr = []
+INF=int(1e9)
+min_bridge=INF
+area_type=1
+for i in range(n):
+    for j in range(n):
+        distance = [[INF] * n for _ in range(n)]
+        visited2 = [[False] * n for _ in range(n)]
+        cnt=0
+        if 0<make_bridge(i, j):
+            area_type+=1
+        if area_type==area_num:
+            break
+
+
+print(min_bridge)

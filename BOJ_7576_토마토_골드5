@@ -1,0 +1,63 @@
+from collections import deque 
+import sys 
+
+n,m=map(int,input().split())
+graph=[]
+q=deque([])
+for i in range(m):
+    temp=list(map(int,sys.stdin.readline().strip().split()))
+    for j in range(len(temp)):
+        if temp[j]==1:
+            q.append([i,j])
+    graph.append(temp)
+
+def bfs(q,idx):
+    new_q=deque([])
+    while q:
+        a,b=q.popleft()
+        if visited[a][b]:
+            continue 
+        visited[a][b]=True 
+        for i,j in zip(dx,dy):
+            nx,ny=a+i,b+j 
+            if 0<=nx<m and 0<=ny<n:
+                # print(nx,ny)
+                if graph[nx][ny]==0:
+                    graph[nx][ny]=idx
+                    new_q.append([nx,ny])
+    return new_q
+
+
+def check(graph):
+    cnt=0
+    for i in range(m):
+        for j in range(n):
+            if graph[i][j]==0:
+                cnt+=1 
+    if cnt:
+        return 0
+    else:
+        return 1
+
+
+
+dx=[0,0,1,-1]
+dy=[1,-1,0,0]
+
+visited=[[False]*n for _ in range(m)]
+
+if check(graph):
+    print(0)
+else:             
+    idx=0
+    while q:
+        idx+=1 
+        q=bfs(q,idx)
+        # print('graph >> ',idx)
+        # for g in graph:
+        #     print(g)
+    
+    if not check(graph):
+        print(-1)
+    else:
+        print(idx-1)

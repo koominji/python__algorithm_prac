@@ -1,0 +1,46 @@
+import sys ,heapq
+INF=int(1e9)
+
+dx = [1, -1, 0, 0]
+dy = [0, 0, -1, 1]
+
+
+def dijkstra(start, distance, n):
+    q = []
+    heapq.heappush(q, (graph[start][start], start, start))
+    distance[start][start] = graph[start][start]
+
+    while q:
+        dist, start, end = heapq.heappop(q)
+        if distance[start][end] < dist:
+            continue
+        tmp = []
+        for x, y in zip(dx, dy):
+            if -1 < start + x < n and -1 < end + y < n:
+                tmp.append((start + x, end + y))
+
+        for t in tmp:
+            cost= dist + graph[t[0]][t[1]]
+            if cost< distance[t[0]][t[1]]:
+                distance[t[0]][t[1]]=cost
+                heapq.heappush(q, (distance[t[0]][t[1]], t[0], t[1]))
+
+def print_answer(ans):
+    for i in range(len(ans)):
+        print("Problem {0}: {1}".format(i+1,ans[i]))
+
+ans=[]
+while True:
+    n=int(input())
+    if n==0:
+        break
+    graph=[]
+    distance=[[INF]*n for _ in range(n)]
+    for _ in range(n):
+        graph.append(list(map(int,sys.stdin.readline().strip().split())))
+
+    dijkstra(0,distance,n)
+    ans.append(distance[n-1][n-1])
+    #print(distance[n-1][n-1])
+
+print_answer(ans)

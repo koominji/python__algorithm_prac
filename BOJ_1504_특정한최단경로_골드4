@@ -1,0 +1,46 @@
+import sys 
+import heapq 
+
+node,edge=map(int,input().split())
+graph=[[] for _ in range(node+1)]
+for _ in range(edge):
+    a,b,c=map(int,sys.stdin.readline().strip().split())
+    graph[a].append([b,c])
+    graph[b].append([a,c])
+    
+v1,v2=map(int,input().split())
+
+INF=int(1e9)
+def dijkstra(start):
+    distance=[INF]*(node+1)
+    distance[start]=0
+    q=[]
+    heapq.heappush(q,[0,start])
+    while q:
+        dist,n=heapq.heappop(q)
+        for i in graph[n]:
+            cost=i[1]+dist
+            if cost<distance[i[0]]:
+                distance[i[0]]=cost
+                heapq.heappush(q,[cost,i[0]])
+    return distance 
+
+d_start_1=dijkstra(1)
+from_one_to_v1=d_start_1[v1]
+from_one_to_v2=d_start_1[v2]
+
+d_start_v1=dijkstra(v1)
+from_v1_to_v2=d_start_v1[v2]
+from_v1_to_n=d_start_v1[node]
+
+d_start_v2=dijkstra(v2)
+from_v2_to_v1=d_start_v2[v1]
+from_v2_to_n=d_start_v2[node]
+
+d1=from_one_to_v1+from_v1_to_v2+from_v2_to_n
+d2=from_one_to_v2+from_v2_to_v1+from_v1_to_n
+ans=min(d1,d2)
+if ans>=INF:
+    print(-1)
+else:
+    print(ans)

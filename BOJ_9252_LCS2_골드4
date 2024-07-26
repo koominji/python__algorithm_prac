@@ -1,0 +1,29 @@
+import sys
+
+str1=str(sys.stdin.readline().strip())
+str2=str(sys.stdin.readline().strip())
+dp=[[0]*(len(str1)+1) for _ in range(len(str2)+1)]
+
+for i in range(len(str1)):
+    for j in range(len(str2)):
+        if str2[j]==str1[i]:
+            dp[j+1][i+1]=dp[j][i]+1
+        else:
+            dp[j+1][i+1]=max(dp[j+1][i],dp[j][i+1])
+
+# lcs찾기
+r=len(str2)
+c=len(str1)
+print(dp[r][c])
+ans=''
+while r>0 and c>0:
+    if dp[r][c-1]==dp[r][c]:
+        c-=1
+    elif dp[r-1][c]==dp[r][c]:
+        r-=1
+    else:
+        ans+=str2[r-1]
+        r-=1
+        c-=1
+
+print(ans[::-1])

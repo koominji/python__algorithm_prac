@@ -1,0 +1,31 @@
+import heapq,sys
+input=sys.stdin.readline
+
+node,edge=map(int,input().split())
+
+graph=[i for i in range(node+1)]
+def find_parent(x):
+    if graph[x]!=x:
+        graph[x]=find_parent(graph[x])
+    return graph[x]
+
+def union(a,b):
+    a,b=find_parent(a),find_parent(b)
+    if a<b:
+        graph[b]=a
+    else:
+        graph[a]=b
+
+q=[]
+for _ in range(edge):
+    a,b,c=map(int,input().split())
+    heapq.heappush(q,(c,a,b))
+
+res=[]
+while q:
+    c,a,b=heapq.heappop(q)
+    if find_parent(a)!=find_parent(b):
+        res.append(c)
+        union(a,b)
+
+print(sum(res)-max(res))

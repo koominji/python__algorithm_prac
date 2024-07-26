@@ -1,0 +1,35 @@
+import sys, heapq
+
+n = int(input())
+graph = []
+visited = [[False] * (n) for _ in range(n)]
+
+for _ in range(n):
+    graph.append(list(map(int, sys.stdin.readline().rstrip())))
+
+
+dx = [1, -1, 0, 0]
+dy = [0, 0, 1, -1]
+
+
+def sol(x, y):
+    q = []
+    heapq.heappush(q, (0, x, y))
+
+    while q:
+        d, r, c = heapq.heappop(q)
+        if r == n - 1 and c == n - 1:
+            return d
+        if visited[r][c]:
+            continue
+        visited[r][c] = True
+        for a, b in zip(dx, dy):
+            if -1 < r + a < n and -1 < c + b < n:
+                if not visited[r + a][c + b]:
+                    if graph[r + a][c + b] == 1:
+                        heapq.heappush(q, (d, r + a, c + b))
+                    else:
+                        heapq.heappush(q, (d + 1, r + a, c + b))
+
+
+print(sol(0, 0))

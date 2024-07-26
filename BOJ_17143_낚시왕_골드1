@@ -1,0 +1,53 @@
+import sys
+
+r,c,n=map(int,sys.stdin.readline().strip().split())
+arr=[[0]*(c+1) for _ in range(r+1)]
+
+for _ in range(n):
+    x,y,s,d,z=map(int,sys.stdin.readline().strip().split())
+    arr[x][y]=[s,d,z]
+
+
+
+dir=[[],[-1,0],[1,0],[0,1],[0,-1]]
+def shark_move(x,y,shark):
+    count,d,z=shark
+    s=count
+    # 상어의 이동
+    while s:
+        dx,dy=dir[d]
+        if 1<=x+dx<=r and 1<=y+dy<=c:
+            x,y=x+dx,y+dy
+            s-=1
+        else:
+            # 벽에 부딪혀서 방향 전환
+            if d%2==0:
+                d-=1
+            else:
+                d+=1
+    global next_arr
+    if next_arr[x][y]:
+        if next_arr[x][y][2]<z:
+            next_arr[x][y]=[count,d,z]
+    else:
+        next_arr[x][y]=[count,d,z]
+
+def fishing(col):
+    global arr,fishing_count
+    for i in range(r+1):
+        if arr[i][f]:
+            fishing_count+=arr[i][f][2]
+            arr[i][f]=0
+            break
+
+fishing_count=0
+for f in range(1,c+1):
+    fishing(f)
+    next_arr=[[0]*(c+1) for _ in range(r+1)]
+    for i in range(1,r+1):
+        for j in range(1,c+1):
+            if arr[i][j]:
+                shark_move(i,j,arr[i][j])
+    arr=next_arr
+
+print(fishing_count)

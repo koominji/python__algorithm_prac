@@ -1,0 +1,69 @@
+from collections import deque
+import sys 
+
+m,n,h=map(int,input().split())
+q=deque([])
+box=[]
+visited=[[[False]*(m) for _ in range(n)] for _ in range(h)]
+
+for i in range(h):
+    arr=[]
+    for j in range(n):
+        temp=list(map(int,sys.stdin.readline().strip().split()))
+        arr.append(temp)
+        for k in range(len(temp)):
+            if temp[k]==1:
+                q.append([i,j,k])
+    box.append(arr)
+
+dx=[0,0,0,0,1,-1]
+dy=[0,0,1,-1,0,0]
+dz=[1,-1,0,0,0,0]
+
+# print(q)
+def check_status(box):
+    cnt=0
+    for i in range(h):
+        for j in range(n):
+            for k in range(m):
+                if box[i][j][k]==0:
+                    return 0
+    return 1
+
+def bfs(q,idx):
+    new_q=deque([])
+    while q:
+        a,b,c=q.popleft()
+        if visited[a][b][c]:
+            continue
+        visited[a][b][c]=True 
+        for i,j,k in zip(dx,dy,dz):
+            if 0<=a+i<h and 0<=b+j<n and 0<=c+k<m:
+                nx,ny,nz=a+i,b+j,c+k
+                if not visited[nx][ny][nz]:
+                    if box[nx][ny][nz]==0:
+                        box[nx][ny][nz]=idx
+                        new_q.append([nx,ny,nz])
+    return new_q 
+
+############ main 함수 ###############
+
+if check_status(box):
+    print(0)
+else:
+    idx=0
+    while q:
+        idx+=1
+        q=bfs(q,idx)
+        # print("idx >> ",idx)
+        # for i in range(h):
+        #     for j in range(n):
+        #         print(box[i][j])
+    if check_status(box):
+        print(idx-1)
+    else:
+        print(-1)
+
+
+
+

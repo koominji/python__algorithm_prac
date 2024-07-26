@@ -1,0 +1,23 @@
+import sys
+from collections import deque
+
+q=deque(list(sys.stdin.readline().strip()))
+bomb=list(input())
+len_b=len(bomb)
+
+# stack
+stack=[]
+
+
+while q:
+    s=q.popleft()
+    stack.append(s)
+    if stack[-len_b:]==bomb:
+        for _ in range(len_b):
+            stack.pop()
+
+ans=''.join(stack)
+if len(ans)==0:
+    print("FRULA")
+else:
+    print(ans)

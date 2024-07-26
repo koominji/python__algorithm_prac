@@ -1,0 +1,76 @@
+from collections import deque
+import sys
+n=int(input())
+arr=[]
+for _ in range(n):
+    arr.append(list(sys.stdin.readline().strip()))
+visited=[[False]*n for _ in range(n)]
+
+dx=[1,-1,0,0]
+dy=[0,0,1,-1]
+
+# 일반인
+def bfs(x,y):
+    q=deque([[x,y]])
+    color=arr[x][y]
+    cnt=0
+    while q:
+        a,b=q.popleft()
+        if visited[a][b]:
+            continue
+        visited[a][b]=True
+        cnt+=1
+        for i,j in zip(dx,dy):
+            nx,ny=a+i,b+j
+            if 0<=nx<n and 0<=ny<n:
+                if arr[nx][ny]==color:
+                    q.append([nx,ny])
+
+    return cnt
+
+# 적록색약
+def bfs2(x,y):
+    q=deque([[x,y]])
+    color=arr[x][y]
+    if color!='B':
+        color=['R','G']
+    else:
+        color=['B']
+    cnt=0
+    while q:
+        a,b=q.popleft()
+        if visited[a][b]:
+            continue
+        visited[a][b]=True
+        cnt+=1
+        for i,j in zip(dx,dy):
+            nx,ny=a+i,b+j
+            if 0<=nx<n and 0<=ny<n:
+                if arr[nx][ny] in color:
+                    q.append([nx,ny])
+
+    return cnt
+
+# 일반인
+visited=[[False]*n for _ in range(n)]
+area1=0
+for i in range(n):
+    for j in range(n):
+        if visited[i][j]:
+            continue
+        else:
+            if bfs(i,j):
+                area1+=1
+# print(area1)
+
+# 적록색약
+visited=[[False]*n for _ in range(n)]
+area2=0
+for i in range(n):
+    for j in range(n):
+        if visited[i][j]:
+            continue
+        else:
+            if bfs2(i,j):
+                area2+=1
+print(area1,area2)

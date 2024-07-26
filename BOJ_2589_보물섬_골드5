@@ -1,0 +1,41 @@
+import sys
+from collections import deque
+
+row,col=map(int,input().split())
+
+graph=[]
+for _ in range(row):
+    graph.append(list(sys.stdin.readline().strip()))
+
+
+dx=[1,-1,0,0]
+dy=[0,0,1,-1]
+
+def sol(r,c,visited):
+    if graph[r][c]=='W':
+        return
+    visited[r][c]=1
+    q=deque([[r,c]])
+    while q:
+        r,c=q.popleft()
+        tmp=[]
+        for x,y in zip(dx,dy):
+            if -1<r+x<row and -1<c+y<col:
+                tmp.append([r+x,c+y])
+        for a,b in tmp:
+            if graph[a][b]=='L' and visited[a][b]==False:
+                q.append([a,b])
+                visited[a][b]=visited[r][c]+1
+
+
+
+max_num=0
+for i in range(row):
+    for j in range(col):
+        visited=[[False]*(col) for _ in range(row)]
+        sol(i,j,visited)
+        num=max(map(max,visited))
+        if num>max_num:
+            max_num=num
+
+print(max_num-1)
