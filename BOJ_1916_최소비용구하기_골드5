@@ -1,0 +1,32 @@
+import sys
+import heapq
+
+n = int(input())
+m = int(input())
+
+INF = int(1e9)
+graph = [[] for _ in range(n + 1)]
+distance = [INF] * (n + 1)
+
+for _ in range(m):
+    a, b, c = map(int, sys.stdin.readline().strip().split())
+    graph[a].append([b, c])
+
+start, end = map(int, sys.stdin.readline().strip().split())
+
+def dijkstra(start):
+    q = []
+    heapq.heappush(q, [0, start])
+    distance[start] = 0
+    while q:
+        d, node = heapq.heappop(q)
+        if d > distance[node]:
+            continue
+        for n in graph[node]:
+            cost = d + n[1]
+            if cost < distance[n[0]]:
+                distance[n[0]] = cost
+                heapq.heappush(q, [cost, n[0]])
+
+dijkstra(start)
+print(distance[end])
